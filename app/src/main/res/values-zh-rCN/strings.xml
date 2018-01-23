@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">myApp</string>
+    <string name="permission_decription">this is permission decription</string>
+    <string name="search_title">搜索</string>
+    <string name="pull_to_load_more">再往上拉</string>
+
+    <string name="news_today">今日热闻</string>
+    <string name="date_zh">%1$d月%2$d日 %3$s</string><!--month monthDay weekday-->
+    <string name="weekday_0">星期日</string>
+    <string name="weekday_1">星期一</string>
+    <string name="weekday_2">星期二</string>
+    <string name="weekday_3">星期三</string>
+    <string name="weekday_4">星期四</string>
+    <string name="weekday_5">星期五</string>
+    <string name="weekday_6">星期六</string>
+
+    <string name="page_title_1">第一页</string>
+    <string name="page_title_2">第二页</string>
+
+    <string name="yes">是的</string>
+    <string name="no">不行</string>
+
+    <string name="no_network_available">没联网啊</string>
+    <string name="no_new_latest_news">没新推荐啦</string>
+    <string name="no_news_to_show">啥都没加载啊</string>
+    <string name="download_nothing">下载不了啦</string>
+
+    <string name="write_external_storage_explanation">我需要这权限将消息保存到本地，如果不给这权限，只能每次从网络上下载消息。这可能会多消耗流量。我现在能向你要权限了嘛</string>
+    <string name="no_write_external_storage_permission">就服你这种土豪大佬</string>
+</resources>

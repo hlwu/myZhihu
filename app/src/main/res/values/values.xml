@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="view_pager_background">#eeeeee</color>
+
+    <dimen name="card_margin">4dp</dimen>
+    <dimen name="card_corner_radius">10dp</dimen>
+    <dimen name="card_height">120dp</dimen>
+    <dimen name="card_image_height">100dp</dimen>
+    <dimen name="card_image_width">100dp</dimen>
+    <dimen name="card_inline_padding">10dp</dimen>
+    <color name="card_background">@android:color/white</color>
+    <dimen name="card_title_margin_right">15dp</dimen>
+    <dimen name="card_title_margin_left">120dp</dimen>
+
+    <dimen name="date_height">30dp</dimen>
+    <dimen name="date_margin_left">10dp</dimen>
+    <dimen name="date_text_size">13sp</dimen>
+
+    <dimen name="empty_view_text_size">18sp</dimen>
+
+    <dimen name="banner_view_height">225dp</dimen>
+</resources>

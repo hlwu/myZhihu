@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">myApp</string>
+    <string name="permission_decription">this is permission decription</string>
+    <string name="search_title">search</string>
+    <string name="pull_to_load_more">Pull up to load more</string>
+
+    <string name="news_today">Today\'s news</string>
+    <string name="date_es">%1$s, %2$s %3$d, %4$d</string><!--weekday, month monthDay, year-->
+    <string name="weekday_0">Sun</string>
+    <string name="weekday_1">Mon</string>
+    <string name="weekday_2">Tue</string>
+    <string name="weekday_3">Wed</string>
+    <string name="weekday_4">Thu</string>
+    <string name="weekday_5">Fri</string>
+    <string name="weekday_6">Sat</string>
+    <string name="month_1">Jan</string>
+    <string name="month_2">Feb</string>
+    <string name="month_3">Mar</string>
+    <string name="month_4">Apr</string>
+    <string name="month_5">May</string>
+    <string name="month_6">Jun</string>
+    <string name="month_7">Jul</string>
+    <string name="month_8">Aug</string>
+    <string name="month_9">Sep</string>
+    <string name="month_10">Oct</string>
+    <string name="month_11">Nov</string>
+    <string name="month_12">Dec</string>
+
+    <string name="page_title_1">page1</string>
+    <string name="page_title_2">page2</string>
+
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
+
+    <string name="no_network_available">No network available</string>
+    <string name="no_new_latest_news">No new news</string>
+    <string name="no_news_to_show">No news to show</string>
+    <string name="download_nothing">Can\'t download news</string>
+
+    <string name="write_external_storage_explanation">I need this permission to save news, otherwise you may waste mobile data. Can I request the permission now?</string>
+    <string name="no_write_external_storage_permission">OK</string>
+</resources>
