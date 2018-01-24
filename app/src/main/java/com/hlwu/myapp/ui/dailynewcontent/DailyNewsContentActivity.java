@@ -1,6 +1,8 @@
-package com.hlwu.myapp.ui;
+package com.hlwu.myapp.ui.dailynewcontent;
 
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,10 +13,19 @@ import android.widget.ImageView;
 import com.google.gson.Gson;
 import com.hlwu.myapp.R;
 import com.hlwu.myapp.news.StoriesContent;
+import com.hlwu.myapp.presenter.DailyNewsFragmentPresenter;
 import com.hlwu.myapp.utils.HtmlUtil;
 import com.hlwu.myapp.utils.NetUtil;
+import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
+import java.io.File;
 import java.util.LinkedList;
 
 /**
@@ -26,6 +37,7 @@ public class DailyNewsContentActivity extends Activity {
     private static final String TAG = "DailyNewsContentActivity";
     private static final String URL = "https://news-at.zhihu.com/api/4/news/";
 
+    private static UnlimitedDiskCache mUnlimitedDiskCache;
     private DailyNewsContentTitileCardLayout mTitleCard;
     private WebView mWebView;
 
@@ -34,12 +46,38 @@ public class DailyNewsContentActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.daily_news_content);
 
+        initImageLoader(this);
+
         mTitleCard = (DailyNewsContentTitileCardLayout) findViewById(R.id.title_card);
         mTitleCard.getmImageView().setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         mWebView = (WebView) findViewById(R.id.news_webview);
         mWebView.getSettings().setJavaScriptEnabled(true);
         new Thread(mNetRunnable).start();
+    }
+
+    public static void initImageLoader(Context context) {
+        DisplayImageOptions options = new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.drawable.foreground_op1)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
+                .bitmapConfig(Bitmap.Config.RGB_565)
+                .build();
+        mUnlimitedDiskCache = new UnlimitedDiskCache(new File(DailyNewsFragmentPresenter.ICON_CACHE_PATH));
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
+                .defaultDisplayImageOptions(options)
+                .denyCacheImageMultipleSizesInMemory()
+                .threadPriority(Thread.NORM_PRIORITY - 2)
+                .threadPoolSize(3)
+                .memoryCache(new WeakMemoryCache())
+                .diskCacheFileNameGenerator(new Md5FileNameGenerator())
+                .diskCacheFileCount(100)
+                .diskCache(mUnlimitedDiskCache)
+                .tasksProcessingOrder(QueueProcessingType.LIFO)
+                .writeDebugLogs()
+                .build();
+        ImageLoader.getInstance().init(config);
     }
 
     private Runnable mNetRunnable = new Runnable() {
@@ -82,4 +120,9 @@ public class DailyNewsContentActivity extends Activity {
         }
     };
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        System.exit(0);
+    }
 }

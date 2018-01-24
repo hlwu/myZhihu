@@ -3,10 +3,10 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent">
 
-    <com.hlwu.myapp.ui.DailyNewsContentTitileCardLayout
+    <com.hlwu.myapp.ui.dailynewcontent.DailyNewsContentTitileCardLayout
         android:id="@+id/title_card"
         android:layout_width="match_parent"
-        android:layout_height="200dp"></com.hlwu.myapp.ui.DailyNewsContentTitileCardLayout>
+        android:layout_height="200dp"></com.hlwu.myapp.ui.dailynewcontent.DailyNewsContentTitileCardLayout>
     <WebView
         android:id="@+id/news_webview"
         android:layout_width="match_parent"

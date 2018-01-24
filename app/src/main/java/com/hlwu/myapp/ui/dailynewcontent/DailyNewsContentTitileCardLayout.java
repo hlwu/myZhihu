@@ -1,4 +1,4 @@
-package com.hlwu.myapp.ui;
+package com.hlwu.myapp.ui.dailynewcontent;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

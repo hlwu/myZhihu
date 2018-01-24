@@ -20,7 +20,10 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.DailyNewsContentActivity">
+        <activity
+            android:name=".ui.dailynewcontent.DailyNewsContentActivity"
+            android:launchMode="singleTop"
+            android:process=":remote" >
         </activity>
 
     </application>

@@ -10,7 +10,7 @@
         android:layout_height="@dimen/banner_view_height"
         app:canLoop="true" />
 
-    <!--<com.hlwu.myapp.ui.BannerLayout-->
+    <!--<com.hlwu.myapp.ui.dailynewslist.BannerLayoutyout&ndash;&gt;-->
         <!--android:id="@+id/banner_layout"-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="@dimen/banner_view_height"-->

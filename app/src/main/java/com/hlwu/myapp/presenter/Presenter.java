@@ -2,7 +2,7 @@ package com.hlwu.myapp.presenter;
 
 import android.os.Bundle;
 
-import com.hlwu.myapp.ui.Ui;
+import com.hlwu.myapp.ui.base.Ui;
 
 /**
  * Base class for Presenters.

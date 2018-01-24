@@ -1,4 +1,4 @@
-package com.hlwu.myapp.ui;
+package com.hlwu.myapp.ui.base;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import com.hlwu.myapp.presenter.Presenter;
-import com.nostra13.universalimageloader.utils.L;
 
 /**
  * Parent for all fragments that use Presenters and Ui design.

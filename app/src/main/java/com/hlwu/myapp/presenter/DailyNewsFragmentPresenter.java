@@ -6,8 +6,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
@@ -24,9 +22,9 @@ import com.hlwu.myapp.db.DailyNewsDBManager;
 import com.hlwu.myapp.news.DailyStructure;
 import com.hlwu.myapp.news.Stories;
 import com.hlwu.myapp.news.TopStories;
-import com.hlwu.myapp.ui.DailyNewsItems;
-import com.hlwu.myapp.ui.DailyNewsFragment;
-import com.hlwu.myapp.ui.Ui;
+import com.hlwu.myapp.ui.dailynewslist.DailyNewsItems;
+import com.hlwu.myapp.ui.dailynewslist.DailyNewsFragment;
+import com.hlwu.myapp.ui.base.Ui;
 import com.hlwu.myapp.utils.NetUtil;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
@@ -55,7 +53,7 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
 
     private static final String TAG = "flaggg_RecyclerViewFragmentPresenter";
 
-    private static final String ICON_CACHE_PATH = Environment.getExternalStorageDirectory()+ "/Android/data/com.hlwu.myApp/imgCache";
+    public static final String ICON_CACHE_PATH = Environment.getExternalStorageDirectory()+ "/Android/data/com.hlwu.myApp/imgCache";
     private static final int MSG_GET_NEWS_DONE = 0;
     private static final int MSG_GET_IMAGE_DONE = 1;
     private static final int MSG_STOP_REFRESHING = 2;

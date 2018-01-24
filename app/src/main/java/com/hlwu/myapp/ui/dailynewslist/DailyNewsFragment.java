@@ -1,4 +1,4 @@
-package com.hlwu.myapp.ui;
+package com.hlwu.myapp.ui.dailynewslist;
 
 import android.Manifest;
 import android.content.Context;
@@ -31,6 +31,9 @@ import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 import com.hlwu.myapp.R;
 import com.hlwu.myapp.news.TopStories;
 import com.hlwu.myapp.presenter.DailyNewsFragmentPresenter;
+import com.hlwu.myapp.ui.MainActivity;
+import com.hlwu.myapp.ui.base.BaseFragment;
+import com.hlwu.myapp.ui.dailynewcontent.DailyNewsContentActivity;
 import com.hlwu.myapp.utils.NetUtil;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.yalantis.phoenix.PullToRefreshView;

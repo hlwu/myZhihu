@@ -1,7 +1,5 @@
 package com.hlwu.myapp.ui;
 
-import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,21 +17,17 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import android.support.design.widget.TabLayout;
 
-import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
-import com.bigkoo.convenientbanner.holder.Holder;
 import com.hlwu.myapp.R;
-
-import java.util.ArrayList;
+import com.hlwu.myapp.ui.dailynewslist.DailyNewsFragment;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, TabLayout.OnTabSelectedListener {
 
     private static final String TAG = "flaggg_myApp";
-    protected static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 100;
+    public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 100;
 
     private LinearLayout ll;
     private SearchView mSearchView;

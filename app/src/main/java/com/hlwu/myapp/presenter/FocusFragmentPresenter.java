@@ -2,7 +2,7 @@ package com.hlwu.myapp.presenter;
 
 import android.content.Context;
 
-import com.hlwu.myapp.ui.Ui;
+import com.hlwu.myapp.ui.base.Ui;
 
 /**
  * Created by hlwu on 1/11/18.

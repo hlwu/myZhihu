@@ -1,4 +1,4 @@
-package com.hlwu.myapp.ui;
+package com.hlwu.myapp.ui.dailynewslist;
 
 import android.graphics.Bitmap;
 
