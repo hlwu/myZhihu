@@ -1,6 +1,7 @@
 package com.hlwu.myapp.ui;
 
 import android.content.pm.PackageManager;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -17,7 +18,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import android.support.design.widget.TabLayout;
 
@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TAG = "flaggg_myApp";
     public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 100;
 
-    private LinearLayout ll;
     private SearchView mSearchView;
     private DailyNewsFragment mDailyNewsFragment;
     private FocusFragment mSecondFragment;
@@ -64,8 +63,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ll = (LinearLayout) findViewById(R.id.main_layout);
-        ll.setOnClickListener(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
@@ -73,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (toolbar != null) {
             setSupportActionBar(toolbar);
+            toolbar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
         }
 
         viewPager.setAdapter(new SectionPagerAdapter(getSupportFragmentManager()));
@@ -151,8 +149,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
-        }
     }
 
     @Override

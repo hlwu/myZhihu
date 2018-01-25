@@ -1,12 +1,15 @@
 package com.hlwu.myapp.ui.dailynewcontent;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.webkit.WebView;
 import android.widget.ImageView;
 
@@ -32,7 +35,7 @@ import java.util.LinkedList;
  * Created by hlwu on 1/15/18.
  */
 
-public class DailyNewsContentActivity extends Activity {
+public class DailyNewsContentActivity extends AppCompatActivity {
 
     private static final String TAG = "DailyNewsContentActivity";
     private static final String URL = "https://news-at.zhihu.com/api/4/news/";
@@ -54,6 +57,17 @@ public class DailyNewsContentActivity extends Activity {
         mWebView = (WebView) findViewById(R.id.news_webview);
         mWebView.getSettings().setJavaScriptEnabled(true);
         new Thread(mNetRunnable).start();
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.content_toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+        }
+        ActionBar actionBar = this.getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle("asadasdasdasdadsas");
+            actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+        }
     }
 
     public static void initImageLoader(Context context) {
@@ -123,6 +137,6 @@ public class DailyNewsContentActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        System.exit(0);
+        System.exit(0); //exit this process, to avoid webview memory leak
     }
 }
