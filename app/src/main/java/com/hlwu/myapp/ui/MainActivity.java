@@ -1,5 +1,6 @@
 package com.hlwu.myapp.ui;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -15,8 +16,6 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 
 import android.support.design.widget.TabLayout;
@@ -29,32 +28,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TAG = "flaggg_myApp";
     public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 100;
 
+    private static final int PAGE_COUNT = 1;
+
     private SearchView mSearchView;
     private DailyNewsFragment mDailyNewsFragment;
     private FocusFragment mSecondFragment;
-    private boolean mIsTabSelectedJust = false;
+    private boolean mDoubleClickFlag = false;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_toolbar, menu);
-
-        final MenuItem myActionMenuItem = menu.findItem(R.id.search);
-        mSearchView = (SearchView) myActionMenuItem.getActionView();
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                if(!mSearchView.isIconified()) {
-                    mSearchView.setIconified(true);
-                }
-                myActionMenuItem.collapseActionView();
-                return false;
-            }
-            @Override
-            public boolean onQueryTextChange(String s) {
-                return false;
-            }
-        });
+//        MenuInflater inflater = getMenuInflater();
+//        inflater.inflate(R.menu.menu_toolbar, menu);
+//
+//        final MenuItem myActionMenuItem = menu.findItem(R.id.search);
+//        mSearchView = (SearchView) myActionMenuItem.getActionView();
+//        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                if(!mSearchView.isIconified()) {
+//                    mSearchView.setIconified(true);
+//                }
+//                myActionMenuItem.collapseActionView();
+//                return false;
+//            }
+//            @Override
+//            public boolean onQueryTextChange(String s) {
+//                return false;
+//            }
+//        });
 
         return true;
     }
@@ -71,11 +72,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             toolbar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+            toolbar.setOnClickListener(this);
         }
 
         viewPager.setAdapter(new SectionPagerAdapter(getSupportFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.addOnTabSelectedListener(this);
+
+        tabLayout.setVisibility(View.GONE);
     }
 
     @Override
@@ -105,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public int getCount() {
-            return 2;
+            return PAGE_COUNT;
         }
 
         @Override
@@ -149,6 +153,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.toolbar:
+                if (!mDoubleClickFlag) {
+                    mDoubleClickFlag = true;
+                    mDoubleSelectedHandler.sendEmptyMessageDelayed(0, 500);
+                } else {
+                    mDailyNewsFragment.getPresenter().getUi().scrollingToStart();
+                }
+        }
     }
 
     @Override
@@ -162,20 +175,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
         if (tab.getPosition() == 0) {
-            if (!mIsTabSelectedJust) {
-                mIsTabSelectedJust = true;
-                mDoubleTabSelectedHandler.sendEmptyMessageDelayed(0, 500);
+            if (!mDoubleClickFlag) {
+                mDoubleClickFlag = true;
+                mDoubleSelectedHandler.sendEmptyMessageDelayed(0, 500);
             } else {
                 mDailyNewsFragment.getPresenter().getUi().scrollingToStart();
             }
         }
     }
 
-    Handler mDoubleTabSelectedHandler = new Handler() {
+    Handler mDoubleSelectedHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            mIsTabSelectedJust = false;
+            mDoubleClickFlag = false;
         }
     };
 }

@@ -1,6 +1,7 @@
 package com.hlwu.myapp.ui.dailynewslist;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,12 +10,12 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.Time;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,13 +36,12 @@ import com.hlwu.myapp.ui.MainActivity;
 import com.hlwu.myapp.ui.base.BaseFragment;
 import com.hlwu.myapp.ui.dailynewcontent.DailyNewsContentActivity;
 import com.hlwu.myapp.utils.NetUtil;
+import com.lhh.ptrrv.library.PullToRefreshRecyclerView;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.yalantis.phoenix.PullToRefreshView;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 public class DailyNewsFragment
         extends BaseFragment<DailyNewsFragmentPresenter, DailyNewsFragmentPresenter.DailyNewsFragmentUI>
@@ -49,26 +49,24 @@ public class DailyNewsFragment
 
     private String TAG = "flaggg_DailyNewsFragment";
 
-    private PullToRefreshView mPullToRefreshView;
-    private RecyclerView mRecyclerView;
+    private PullToRefreshRecyclerView mRecyclerView;
     private DailyNewsAdapter mDailyNewsAdapter;
     private LinearLayoutManager mLinearLayoutManager;
     private ViewGroup mRootView;
+    private AppCompatActivity mActivity;
     private static boolean mShouldLoadBeforeNews;
     private List<DailyNewsItems> mDailyNewsItems = new ArrayList<DailyNewsItems>();
     private List<TopStories> mTopStoriesItems = new ArrayList<TopStories>();
-    private static final int REFRESH_DELAY = 10000;
     private static final long BANNER_AUTO_TURNING_TIME = 4000;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_recycler_view, container, false);
 
-        mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.recycler_view);
+        mRecyclerView = (PullToRefreshRecyclerView) mRootView.findViewById(R.id.recycler_view);
         mLinearLayoutManager = new SmoothLinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setSwipeEnable(true);
         mDailyNewsAdapter = new DailyNewsAdapter(getActivity(), mDailyNewsItems, mTopStoriesItems);
         mDailyNewsAdapter.setOnRecyclerViewItemClickListener(new OnRecyclerViewItemClickListener() {
             @Override
@@ -84,27 +82,17 @@ public class DailyNewsFragment
         mShouldLoadBeforeNews = false;
         mRecyclerView.addOnScrollListener(new OnRecyclerScrollListener());
 
-        mPullToRefreshView = (PullToRefreshView) mRootView.findViewById(R.id.pull_to_refresh);
-        mPullToRefreshView.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
+        mRecyclerView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onRefreshComplete() {
-                mPullToRefreshView.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mPullToRefreshView.setRefreshing(false);
-                    }
-                }, REFRESH_DELAY);
-            }
-
-            @Override
-            public void onRefreshStart() {
+            public void onRefresh() {
+                // do refresh here
                 try {
                     checkWriteExternalStoragePermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
                     if (NetUtil.isNetworkConnected(getContext())) {
                         getPresenter().loadNews("latest");
                     } else {
                         Snackbar.make(mRootView, R.string.no_network_available, Snackbar.LENGTH_LONG).show();
-                        mPullToRefreshView.setRefreshing(false);
+                        mRecyclerView.setRefreshing(false);
                     }
                 } catch (Exception e) {
                     Log.d(TAG, "got exception: " + e);
@@ -113,6 +101,12 @@ public class DailyNewsFragment
         });
 
         return mRootView;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mActivity = (AppCompatActivity) activity;
     }
 
     @Override
@@ -140,8 +134,8 @@ public class DailyNewsFragment
     }
 
     @Override
-    public PullToRefreshView getPullToRefreshView() {
-        return mPullToRefreshView;
+    public PullToRefreshRecyclerView getRecyclerView() {
+        return mRecyclerView;
     }
 
     @Override
@@ -173,7 +167,7 @@ public class DailyNewsFragment
         return getActivity();
     }
 
-    public class OnRecyclerScrollListener extends RecyclerView.OnScrollListener {
+    public class OnRecyclerScrollListener extends RecyclerView.OnScrollListener implements PullToRefreshRecyclerView.OnScrollListener {
 
         private int lastVisibleItem = 0;
 
@@ -208,6 +202,15 @@ public class DailyNewsFragment
                 mShouldLoadBeforeNews = false;
             }
             lastVisibleItem = mLinearLayoutManager.findLastVisibleItemPosition();
+        }
+
+        @Override
+        public void onScroll(RecyclerView recyclerView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            if (mActivity != null) {
+                mActivity.getSupportActionBar().setTitle(getPresenter().getToolbarTitle(firstVisibleItem, mActivity.getSupportActionBar().getTitle().toString()));
+            } else {
+                Log.d(TAG, "mActivity is null!!!!!!");
+            }
         }
     }
 
@@ -262,28 +265,8 @@ public class DailyNewsFragment
             Log.d(TAG, "onBindViewHolder   position: " + position + "; viewType: " + viewType);
             try {
                 if (viewType == DailyNewsFragmentPresenter.VIEW_TYPE_DATE) {
-                    Time today = new Time();
-                    today.setToNow();
-                    int year = Integer.valueOf(dailyNewsItems.get(position).getDate().substring(0, 4));
-                    int month = Integer.valueOf(dailyNewsItems.get(position).getDate().substring(4, 6));
-                    int day = Integer.valueOf(dailyNewsItems.get(position).getDate().substring(6, 8));
-                    if (dailyNewsItems.get(position).getDate().equals(today.format("%Y%m%d"))) {
-                        ((DateViewHolder) viewHolder).mDateView.setText(mContext.getResources().getString(R.string.news_today));
-                    } else {
-                        String date;
-                        Time time = new Time();
-                        time.set(day, (month - 1), year);   //Month [0-11]
-                        time.normalize(true);
-                        if (Locale.getDefault().getLanguage() == "zh") {
-                            date = mContext.getResources().getString(R.string.date_zh,
-                                    month, day, getPresenter().weekDayToString(time.weekDay));
-                        } else {
-                            date = mContext.getResources().getString(R.string.date_es,
-                                    getPresenter().weekDayToString(time.weekDay),
-                                    getPresenter().monthToString(month), day, year);
-                        }
-                        ((DateViewHolder) viewHolder).mDateView.setText(date);
-                    }
+                    Log.d(TAG, "setText: " + getPresenter().getDate(position));
+                    ((DateViewHolder) viewHolder).mDateView.setText(getPresenter().getDate(position));
                 } else if (viewType == DailyNewsFragmentPresenter.VIEW_TYPE_FOOTER) {
                     mFootProgressBar = ((FooterViewHolder) viewHolder).mProgressBar;
                     mFootTextView = ((FooterViewHolder) viewHolder).mTextView;
@@ -324,9 +307,8 @@ public class DailyNewsFragment
         }
 
         @Override
-        public int getItemCount()
-        {
-            return dailyNewsItems == null ? 1    //1 means empty view
+        public int getItemCount() {
+            return (dailyNewsItems == null || (dailyNewsItems != null && dailyNewsItems.size() == 0)) ? 1    //1 means empty view
                     : dailyNewsItems.size() + 1;    //1 means footer view
         }
 
@@ -355,7 +337,7 @@ public class DailyNewsFragment
 
     }
 
-    public static interface OnRecyclerViewItemClickListener {
+    public interface OnRecyclerViewItemClickListener {
         void onItemClick(View view , int position);
     }
 

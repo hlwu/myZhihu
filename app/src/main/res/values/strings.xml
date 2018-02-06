@@ -39,4 +39,8 @@
 
     <string name="write_external_storage_explanation">I need this permission to save news, otherwise you may waste mobile data. Can I request the permission now?</string>
     <string name="no_write_external_storage_permission">OK</string>
+
+    <string name="loading">loading...</string>
+
+    <string name="toolbar_title_daily_news">Daily News</string>
 </resources>

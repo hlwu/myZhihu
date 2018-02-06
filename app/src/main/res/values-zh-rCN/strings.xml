@@ -27,4 +27,6 @@
 
     <string name="write_external_storage_explanation">我需要这权限将消息保存到本地，如果不给这权限，只能每次从网络上下载消息。这可能会多消耗流量。我现在能向你要权限了嘛</string>
     <string name="no_write_external_storage_permission">就服你这种土豪大佬</string>
+
+    <string name="toolbar_title_daily_news">日报</string>
 </resources>

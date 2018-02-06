@@ -1,12 +1,14 @@
 package com.hlwu.myapp.presenter;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -26,6 +28,7 @@ import com.hlwu.myapp.ui.dailynewslist.DailyNewsItems;
 import com.hlwu.myapp.ui.dailynewslist.DailyNewsFragment;
 import com.hlwu.myapp.ui.base.Ui;
 import com.hlwu.myapp.utils.NetUtil;
+import com.lhh.ptrrv.library.PullToRefreshRecyclerView;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
@@ -37,12 +40,12 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.assist.ImageSize;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-import com.yalantis.phoenix.PullToRefreshView;
 
 import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -105,7 +108,7 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
         List<DailyNewsItems> getmDailyNewsItems();
         List<TopStories> getmTopStoriesItems();
         DailyNewsFragment.DailyNewsAdapter getRecyclerAdapter();
-        PullToRefreshView getPullToRefreshView();
+        PullToRefreshRecyclerView getRecyclerView();
         void showNoNewLatestNews();
         void showFootProgressLoading(boolean isLoading);
         void showDownloadNothing();
@@ -193,7 +196,7 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
                     updateImage(mTheStoriesWhichDidNotAddIcon, iconObject.imageUri, iconObject.loadedImage);
                     break;
                 case MSG_STOP_REFRESHING:
-                    getUi().getPullToRefreshView().setRefreshing(false);
+                    getUi().getRecyclerView().setRefreshing(false);
                     break;
                 case MSG_DOWNLOAD_NOTHING:
                     getUi().showDownloadNothing();
@@ -261,12 +264,48 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
         return VIEW_TYPE_STORIES;
     }
 
+    public String getToolbarTitle(int firstVisibleItem, String currentTitle) {
+        int itemType = getUi().getRecyclerAdapter().getItemViewType(firstVisibleItem);
+        String title = currentTitle;
+        if (itemType == VIEW_TYPE_BANNER) {
+            title = getUi().getContext().getResources().getString(R.string.toolbar_title_daily_news);
+        } else if (itemType == VIEW_TYPE_DATE) {
+            title = getDate(firstVisibleItem);
+        }
+        return title;
+    }
+
+    public String getDate(int position) {
+        Time today = new Time();
+        today.setToNow();
+        int year = Integer.valueOf(getUi().getmDailyNewsItems().get(position).getDate().substring(0, 4));
+        int month = Integer.valueOf(getUi().getmDailyNewsItems().get(position).getDate().substring(4, 6));
+        int day = Integer.valueOf(getUi().getmDailyNewsItems().get(position).getDate().substring(6, 8));
+        if (getUi().getmDailyNewsItems().get(position).getDate().equals(today.format("%Y%m%d"))) {
+            return getUi().getContext().getResources().getString(R.string.news_today);
+        } else {
+            String date;
+            Time time = new Time();
+            time.set(day, (month - 1), year);   //Month [0-11]
+            time.normalize(true);
+            if (Locale.getDefault().getLanguage() == "zh") {
+                date = getUi().getContext().getResources().getString(R.string.date_zh,
+                        month, day, weekDayToString(time.weekDay));
+            } else {
+                date = getUi().getContext().getResources().getString(R.string.date_es,
+                        weekDayToString(time.weekDay), monthToString(month), day, year);
+            }
+            return date;
+        }
+    }
+
     public void loadNews(String date) {
         mNewsDate = date;
         new Thread(mNetRunnable).start();
     }
 
     private Runnable mNetRunnable = new Runnable() {
+        @TargetApi(Build.VERSION_CODES.N)
         @SuppressLint("LongLogTag")
         @Override
         public void run() {
@@ -285,7 +324,7 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
             String newsJson = NetUtil.get(url);     //download news
             Gson gson = new Gson();
             DailyStructure news = gson.fromJson(newsJson, DailyStructure.class);
-//            Log.d(TAG, "newsJson: " + newsJson);
+            Log.d(TAG, "newsJson: " + newsJson);
 
             if (news == null) {
                 Message msg = mUiHandler.obtainMessage(MSG_DOWNLOAD_NOTHING);
@@ -475,16 +514,19 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
     private InnerImageLoadingListener mImageLoadingListener = new InnerImageLoadingListener();
     private class InnerImageLoadingListener implements ImageLoadingListener {
 
+        @SuppressLint("LongLogTag")
         @Override
         public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
             Log.d(TAG, "onLoadingFailed failReason: " + failReason);
         }
 
+        @SuppressLint("LongLogTag")
         @Override
         public void onLoadingStarted(String imageUri, View view) {
             Log.d(TAG, "onLoadingStarted view: " + view);
         }
 
+        @SuppressLint("LongLogTag")
         @Override
         public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
             Log.d(TAG, "onLoadingComplete, loadedImage: " + loadedImage);
@@ -494,6 +536,7 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
             mUiHandler.sendMessage(msg);
         }
 
+        @SuppressLint("LongLogTag")
         @Override
         public void onLoadingCancelled(String imageUri, View view) {
             Log.d(TAG, "onLoadingCancelled");
@@ -527,7 +570,7 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
         }
     }
 
-    public String weekDayToString(int num) {
+    private String weekDayToString(int num) {
         int resId = -1;
         switch (num) {
             case 0: resId = R.string.weekday_0; break;
@@ -541,7 +584,7 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
         return getUi().getContext().getResources().getString(resId);
     }
 
-    public String monthToString(int num) {
+    private String monthToString(int num) {
         int resId = -1;
         switch (num) {
             case 1: resId = R.string.month_1; break;
