@@ -7,7 +7,7 @@ https://github.com/saiwu-bigkoo/Android-ConvenientBanner
 
 https://github.com/nostra13/Android-Universal-Image-Loader
 
-https://github.com/Yalantis/PullToRefresh
+https://github.com/HomHomLin/Android-PullToRefreshRecyclerView
 
 知乎API：
 
