@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">myApp</string>
+    <string name="app_name">日报</string>
     <string name="permission_decription">this is permission decription</string>
     <string name="search_title">搜索</string>
     <string name="pull_to_load_more">再往上拉</string>
@@ -29,4 +29,12 @@
     <string name="no_write_external_storage_permission">就服你这种土豪大佬</string>
 
     <string name="toolbar_title_daily_news">日报</string>
+    <string name="toolbar_news_content">详情</string>
+    <string name="toolbar_menu_about">关于</string>
+
+    <string name="about_1">模仿知乎日报,并抓取日报内容显示.</string>
+    <string name="about_2">非用于商业目的, 仅仅闲着做着玩.</string>
+    <string name="about_3">侵删.</string>
+    <string name="about_4">wanghlwu@gmail.com</string>
+    <string name="about_5">版本: 1.0</string>
 </resources>

@@ -1,98 +1,46 @@
 package com.hlwu.myapp.ui.dailynewcontent;
 
-import android.content.Context;
-import android.graphics.Bitmap;
+import android.annotation.SuppressLint;
+import android.content.ContentValues;
+import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.View;
 import android.webkit.WebView;
 import android.widget.ImageView;
 
+import com.github.xiaozhucdj.sildbacklibrary.SlideBaseActivity;
 import com.google.gson.Gson;
 import com.hlwu.myapp.R;
+import com.hlwu.myapp.db.DBHelper;
+import com.hlwu.myapp.db.DailyNewsContentDBManager;
 import com.hlwu.myapp.news.StoriesContent;
-import com.hlwu.myapp.presenter.DailyNewsFragmentPresenter;
 import com.hlwu.myapp.utils.HtmlUtil;
 import com.hlwu.myapp.utils.NetUtil;
-import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
-import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
-import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
-import java.io.File;
 import java.util.LinkedList;
 
 /**
  * Created by hlwu on 1/15/18.
  */
 
-public class DailyNewsContentActivity extends AppCompatActivity {
+public class DailyNewsContentActivity extends SlideBaseActivity {
 
     private static final String TAG = "DailyNewsContentActivity";
     private static final String URL = "https://news-at.zhihu.com/api/4/news/";
 
-    private static UnlimitedDiskCache mUnlimitedDiskCache;
     private DailyNewsContentTitileCardLayout mTitleCard;
     private WebView mWebView;
+    private DailyNewsContentDBManager mDailyNewsContentDBManager;
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.daily_news_content);
-
-        initImageLoader(this);
-
-        mTitleCard = (DailyNewsContentTitileCardLayout) findViewById(R.id.title_card);
-        mTitleCard.getmImageView().setScaleType(ImageView.ScaleType.CENTER_CROP);
-
-        mWebView = (WebView) findViewById(R.id.news_webview);
-        mWebView.getSettings().setJavaScriptEnabled(true);
-        new Thread(mNetRunnable).start();
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.content_toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-        }
-        ActionBar actionBar = this.getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle("asadasdasdasdadsas");
-            actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
-        }
-    }
-
-    public static void initImageLoader(Context context) {
-        DisplayImageOptions options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.foreground_op1)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .build();
-        mUnlimitedDiskCache = new UnlimitedDiskCache(new File(DailyNewsFragmentPresenter.ICON_CACHE_PATH));
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
-                .defaultDisplayImageOptions(options)
-                .denyCacheImageMultipleSizesInMemory()
-                .threadPriority(Thread.NORM_PRIORITY - 2)
-                .threadPoolSize(3)
-                .memoryCache(new WeakMemoryCache())
-                .diskCacheFileNameGenerator(new Md5FileNameGenerator())
-                .diskCacheFileCount(100)
-                .diskCache(mUnlimitedDiskCache)
-                .tasksProcessingOrder(QueueProcessingType.LIFO)
-                .writeDebugLogs()
-                .build();
-        ImageLoader.getInstance().init(config);
-    }
+    private static final String TASK_SAVE_DAILYNEWS_CONTENT = "save_dailynews_content";
+    private static final String TASK_LOAD_DAILYNEWS_CONTENT = "load_dailynews_content";
 
     private Runnable mNetRunnable = new Runnable() {
         @Override
@@ -107,6 +55,12 @@ public class DailyNewsContentActivity extends AppCompatActivity {
                 msg.obj = news;
                 mUiHandler.sendMessage(msg);
             }
+
+            //insert or update to daily news content table start
+            (new DBTask()).execute(TASK_SAVE_DAILYNEWS_CONTENT, newsJson);
+            //insert or update to daily news content table end
+
+            Log.d("flaggg", "query: " + mDailyNewsContentDBManager.queryById(news.getId()));
 
         }
     };
@@ -138,5 +92,101 @@ public class DailyNewsContentActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         System.exit(0); //exit this process, to avoid webview memory leak
+    }
+
+    @Override
+    public int setContentViewId() {
+        return R.layout.daily_news_content;
+    }
+
+    @Override
+    public void initView(View contentView) {
+        mTitleCard = (DailyNewsContentTitileCardLayout) contentView.findViewById(R.id.title_card);
+        mTitleCard.getmImageView().setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+        mWebView = (WebView) contentView.findViewById(R.id.news_webview);
+        mWebView.getSettings().setJavaScriptEnabled(true);
+        new Thread(mNetRunnable).start();
+
+        Toolbar toolbar = (Toolbar) contentView.findViewById(R.id.content_toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+        }
+        ActionBar actionBar = this.getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
+            actionBar.setTitle(R.string.toolbar_news_content);
+            actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+        }
+
+        mDailyNewsContentDBManager = DailyNewsContentDBManager.getInstance(this);
+    }
+
+    private class DBTask extends AsyncTask<String, Integer, Boolean> {
+        @SuppressLint("LongLogTag")
+        @Override
+        protected Boolean doInBackground(String... strings) {
+            Log.d(TAG, "doInBackground  strings[0]: " + strings[0]);
+            if (strings[0] != null) {
+                switch (strings[0]) {
+                    case TASK_SAVE_DAILYNEWS_CONTENT:
+                        if (strings[1] == null) {
+                            Log.d(TAG, "do save daily news task failed!");
+                            return null;
+                        }
+
+                        Gson gson = new Gson();
+                        StoriesContent news = gson.fromJson(strings[1], StoriesContent.class);
+
+                        //insert to daily_news_content table
+                        ContentValues dailyNewsContentCV = new ContentValues();
+                        dailyNewsContentCV.put(DBHelper.MYZHIHU_TABLE_DAILYNEWS_CONTENT_ID, news.getId());
+                        dailyNewsContentCV.put(DBHelper.MYZHIHU_TABLE_DAILYNEWS_CONTENT_IMAGE, news.getImage());
+                        dailyNewsContentCV.put(DBHelper.MYZHIHU_TABLE_DAILYNEWS_CONTENT_ISREADED, 1);
+                        mDailyNewsContentDBManager.insert(dailyNewsContentCV);
+                        break;
+
+                    case TASK_LOAD_DAILYNEWS_CONTENT:
+//                        if (mImageLoader == null) {
+//                            mImageLoader = ImageLoader.getInstance();
+//                        }
+//
+//                        Cursor c = mDailyNewsDBManager.queryAll();
+//                        if (c != null && c.getCount() > 0) {
+//                            mTheShowingContentIsFromNetwork = false;
+//                            while (c.moveToNext()) {
+//                                String detial = c.getString(c.getColumnIndex(DBHelper.MYZHIHU_TABLE_DAILYNEWS_DETAILS));
+//                                DailyStructure news = (new Gson()).fromJson(detial, DailyStructure.class);
+//                                Time today = new Time();
+//                                today.setToNow();
+//                                if (news.isTopStoriesUpdated(mNewsMap.get(today.format("%Y%m%d")))) {
+//                                    Message msg = mUiHandler.obtainMessage(MSG_TOP_STORIES_UPDATED);
+//                                    msg.obj = news;
+//                                    mUiHandler.sendMessage(msg);
+//                                }
+//                                mNewsMap.put(news.getDate(), news);
+//                                Message msg = mUiHandler.obtainMessage(MSG_GET_NEWS_DONE);
+//                                msg.obj = news;
+//                                mUiHandler.sendMessage(msg);
+//                                mOldestNews = news;
+//
+//                                Stories[] stories = news.getStories();
+//                                for (final Stories story : stories) {
+//                                    mTheStoriesWhichDidNotAddIcon.put(story.getImages()[0], story);
+//                                    ImageSize targetSize = new ImageSize(100, 100); // result Bitmap will be fit to this size
+//                                    //we download the images before, so there should load images from memory or disk
+//                                    mImageLoader.loadImage(story.getImages()[0], targetSize, /*options,*/ mImageLoadingListener);
+//                                }
+//                            }
+//                        } else {
+//                            mIsTheFirstOpened = true;
+//                        }
+                        break;
+                    default:
+                        return null;
+                }
+            }
+            return null;
+        }
     }
 }

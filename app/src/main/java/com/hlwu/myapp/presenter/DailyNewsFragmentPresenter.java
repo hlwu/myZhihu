@@ -56,7 +56,6 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
 
     private static final String TAG = "flaggg_RecyclerViewFragmentPresenter";
 
-    public static final String ICON_CACHE_PATH = Environment.getExternalStorageDirectory()+ "/Android/data/com.hlwu.myApp/imgCache";
     private static final int MSG_GET_NEWS_DONE = 0;
     private static final int MSG_GET_IMAGE_DONE = 1;
     private static final int MSG_STOP_REFRESHING = 2;
@@ -82,20 +81,18 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
     private DailyStructure mJustGotNews;    //include just downloaded news and just queried from db news
     private DailyStructure mOldestNews;
     private DailyNewsDBManager mDailyNewsDBManager;
-    private DailyNewsContentDBManager mDailyNewsContentDBManager;
+//    private DailyNewsContentDBManager mDailyNewsContentDBManager;
     private LinkedHashMap<String, Stories> mTheStoriesWhichDidNotAddIcon = new LinkedHashMap<>();   //used for matching icons.
     private LinkedHashMap<String, DailyStructure> mNewsMap = new LinkedHashMap<String, DailyStructure>();
     private String mNewsDate = "latest";    //decide which day's news to load;
-    private static UnlimitedDiskCache mUnlimitedDiskCache;
     private boolean mIsTheFirstOpened = false;
     private boolean mTheShowingContentIsFromNetwork = true;
 
     @Override
     public void onUiReady(DailyNewsFragmentUI ui) {
         super.onUiReady(ui);
-        initImageLoader(ui.getContext());
         mDailyNewsDBManager = DailyNewsDBManager.getInstance(ui.getContext());
-        mDailyNewsContentDBManager = DailyNewsContentDBManager.getInstance(ui.getContext());
+//        mDailyNewsContentDBManager = DailyNewsContentDBManager.getInstance(ui.getContext());
         initUi();
     }
 
@@ -112,6 +109,7 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
         void showNoNewLatestNews();
         void showFootProgressLoading(boolean isLoading);
         void showDownloadNothing();
+        void showViewPagerIfNecessary();
         void scrollingToStart();
         Context getContext();
     }
@@ -123,30 +121,6 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
             return;
         }
         new DBTask().execute(TASK_LOAD_DAILYNEWS);
-    }
-
-    public static void initImageLoader(Context context) {
-        DisplayImageOptions options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.foreground_op1)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .build();
-        mUnlimitedDiskCache = new UnlimitedDiskCache(new File(ICON_CACHE_PATH));
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
-                .defaultDisplayImageOptions(options)
-                .denyCacheImageMultipleSizesInMemory()
-                .threadPriority(Thread.NORM_PRIORITY - 2)
-                .threadPoolSize(3)
-                .memoryCache(new WeakMemoryCache())
-                .diskCacheFileNameGenerator(new Md5FileNameGenerator())
-                .diskCacheFileCount(100)
-                .diskCache(mUnlimitedDiskCache)
-                .tasksProcessingOrder(QueueProcessingType.LIFO)
-                .writeDebugLogs()
-                .build();
-        ImageLoader.getInstance().init(config);
     }
 
     private Handler mUiHandler = new Handler() {
@@ -164,7 +138,7 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
                     getUi().getmDailyNewsItems().add(new DailyNewsItems(null, null, 0, mJustGotNews.getDate()));   // add date
                     for (Stories story : mJustGotNews.getStories()) {     // add stories
                         getUi().getmDailyNewsItems().add(new DailyNewsItems(story.getTitle(),
-                                BitmapFactory.decodeResource(getUi().getContext().getResources(), R.drawable.foreground_op),
+                                BitmapFactory.decodeResource(getUi().getContext().getResources(), android.R.drawable.stat_sys_download_done),
                                 story.getId(), null));
                     }
                     getUi().getRecyclerAdapter().notifyDataSetChanged();
@@ -181,7 +155,7 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
                     for (int i = 0; i < latestStories.length; i++) {    //insert the latest stories
                         if (latestStories[i].getId() != oldLatestStoryId) { //the new stories, insert it
                             getUi().getmDailyNewsItems().add(i + 1, new DailyNewsItems(latestStories[i].getTitle(),
-                                    BitmapFactory.decodeResource(getUi().getContext().getResources(), R.drawable.foreground_op),
+                                    BitmapFactory.decodeResource(getUi().getContext().getResources(), android.R.drawable.stat_sys_download_done),
                                     latestStories[i].getId(), null));
                         } else {
                             break;
@@ -197,6 +171,7 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
                     break;
                 case MSG_STOP_REFRESHING:
                     getUi().getRecyclerView().setRefreshing(false);
+                    getUi().showViewPagerIfNecessary();
                     break;
                 case MSG_DOWNLOAD_NOTHING:
                     getUi().showDownloadNothing();
@@ -390,7 +365,6 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
                     mTheStoriesWhichDidNotAddIcon.put(story.getImages()[0], story);
                     ImageSize targetSize = new ImageSize(100, 100); // result Bitmap will be fit to this size
                     mImageLoader.loadImage(story.getImages()[0], targetSize, /*options,*/ mImageLoadingListener);   //download images
-                    Log.d(TAG, "mUnlimitedDiskCache: " + mUnlimitedDiskCache.get(story.getImages()[0]));
                 }
                 //update UI end
 
@@ -425,15 +399,15 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
                             mDailyNewsDBManager.update(dailyNewsUpdateCV, DBHelper.MYZHIHU_TABLE_DAILYNEWS_DATE + " = ?", new String[]{strings[1]});
                         }
 
-                        //insert to daily_news_content table
-                        ContentValues dailyNewsContentCV = new ContentValues();
-                        DailyStructure dailyNews = (new Gson()).fromJson(strings[2], DailyStructure.class);
-                        for (Stories story : dailyNews.getStories()) {
-                            dailyNewsContentCV.put(DBHelper.MYZHIHU_TABLE_DAILYNEWS_CONTENT_ID, story.getId());
-                            dailyNewsContentCV.put(DBHelper.MYZHIHU_TABLE_DAILYNEWS_CONTENT_TYPE, story.getType());
-                            dailyNewsContentCV.put(DBHelper.MYZHIHU_TABLE_DAILYNEWS_CONTENT_TITLE, story.getTitle());
-                            mDailyNewsContentDBManager.insert(dailyNewsContentCV);
-                        }
+//                        //insert to daily_news_content table
+//                        ContentValues dailyNewsContentCV = new ContentValues();
+//                        DailyStructure dailyNews = (new Gson()).fromJson(strings[2], DailyStructure.class);
+//                        for (Stories story : dailyNews.getStories()) {
+//                            dailyNewsContentCV.put(DBHelper.MYZHIHU_TABLE_DAILYNEWS_CONTENT_ID, story.getId());
+//                            dailyNewsContentCV.put(DBHelper.MYZHIHU_TABLE_DAILYNEWS_CONTENT_TYPE, story.getType());
+//                            dailyNewsContentCV.put(DBHelper.MYZHIHU_TABLE_DAILYNEWS_CONTENT_TITLE, story.getTitle());
+//                            mDailyNewsContentDBManager.insert(dailyNewsContentCV);
+//                        }
                         break;
 //                    case TASK_SAVE_DAILYNEWS:
 //                        if (strings[1] == null || strings[2] == null) {

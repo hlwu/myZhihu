@@ -104,7 +104,7 @@ public class PullToRefreshRecyclerView extends SwipeRefreshLayout implements Prv
         this.setColorSchemeResources(R.color.swap_holo_green_bright, R.color.swap_holo_bule_bright,
                 R.color.swap_holo_green_bright, R.color.swap_holo_bule_bright);
 
-        mRecyclerView = (RecyclerView)mRootRelativeLayout.findViewById(R.id.recycler_view);
+        mRecyclerView = (RecyclerView)mRootRelativeLayout.findViewById(R.id.ptrrv_recycler_view);
 
         mRecyclerView.setHasFixedSize(true);
 

@@ -16,11 +16,15 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 import android.support.design.widget.TabLayout;
+import android.widget.ProgressBar;
 
 import com.hlwu.myapp.R;
+import com.hlwu.myapp.ui.about.AboutActivity;
 import com.hlwu.myapp.ui.dailynewslist.DailyNewsFragment;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, TabLayout.OnTabSelectedListener {
@@ -34,11 +38,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private DailyNewsFragment mDailyNewsFragment;
     private FocusFragment mSecondFragment;
     private boolean mDoubleClickFlag = false;
+    private Toolbar mToolbar;
+    private TabLayout mTabLayout;
+    private ViewPager mViewPager;
+    private ProgressBar mProgressBar;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.menu_toolbar, menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_toolbar, menu);
 //
 //        final MenuItem myActionMenuItem = menu.findItem(R.id.search);
 //        mSearchView = (SearchView) myActionMenuItem.getActionView();
@@ -65,21 +73,48 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mProgressBar = (ProgressBar) findViewById(R.id.first_loading_progressbar);
 
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-            toolbar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
-            toolbar.setOnClickListener(this);
+        if (mToolbar != null) {
+            setSupportActionBar(mToolbar);
+            mToolbar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+            mToolbar.setOnClickListener(this);
+
+            mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.toolbar_menu_about:
+                            startActivity(new Intent(MainActivity.this, AboutActivity.class));
+                            break;
+                    }
+                    return true;
+                }
+            });
         }
 
-        viewPager.setAdapter(new SectionPagerAdapter(getSupportFragmentManager()));
-        tabLayout.setupWithViewPager(viewPager);
-        tabLayout.addOnTabSelectedListener(this);
+        mViewPager.setAdapter(new SectionPagerAdapter(getSupportFragmentManager()));
+        mTabLayout.setupWithViewPager(mViewPager);
+        mTabLayout.addOnTabSelectedListener(this);
 
-        tabLayout.setVisibility(View.GONE);
+        mTabLayout.setVisibility(View.GONE);
+        mViewPager.setVisibility(View.INVISIBLE);
+    }
+
+    public ProgressBar getmProgressBar() {
+        return mProgressBar;
+    }
+
+    public ViewPager getmViewPager() {
+        return mViewPager;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -144,11 +179,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     @Override

@@ -86,17 +86,7 @@ public class DailyNewsFragment
             @Override
             public void onRefresh() {
                 // do refresh here
-                try {
-                    checkWriteExternalStoragePermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                    if (NetUtil.isNetworkConnected(getContext())) {
-                        getPresenter().loadNews("latest");
-                    } else {
-                        Snackbar.make(mRootView, R.string.no_network_available, Snackbar.LENGTH_LONG).show();
-                        mRecyclerView.setRefreshing(false);
-                    }
-                } catch (Exception e) {
-                    Log.d(TAG, "got exception: " + e);
-                }
+                getLatestNews();
             }
         });
 
@@ -107,6 +97,14 @@ public class DailyNewsFragment
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mActivity = (AppCompatActivity) activity;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (mDailyNewsItems == null || (mDailyNewsItems != null && mDailyNewsItems.size() == 0)) {
+            getLatestNews();
+        }
     }
 
     @Override
@@ -154,6 +152,14 @@ public class DailyNewsFragment
     public void showDownloadNothing() {
         if (mRootView != null) {
             Snackbar.make(mRootView, R.string.download_nothing, Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void showViewPagerIfNecessary() {
+        if (((MainActivity) mActivity).getmViewPager().getVisibility() == View.INVISIBLE) {
+            ((MainActivity) mActivity).getmViewPager().setVisibility(View.VISIBLE);
+            ((MainActivity) mActivity).getmProgressBar().setVisibility(View.GONE);
         }
     }
 
@@ -406,14 +412,14 @@ public class DailyNewsFragment
 
         public View createView(Context context) {
             mBannerLayout = new BannerLayout(context, new ImageView(context), new TextView(context));
-            mBannerLayout.getmImageView().setBackgroundResource(R.drawable.foreground_op);
+            mBannerLayout.getmImageView().setBackgroundResource(android.R.drawable.stat_sys_download_done);
             mBannerLayout.getmImageView().setScaleType(ImageView.ScaleType.CENTER_CROP);
             return mBannerLayout;
         }
 
         @Override
         public void updateUIIcon(Context context, int position, String uri) {
-            mBannerLayout.getmImageView().setBackgroundResource(R.drawable.foreground_op);
+            mBannerLayout.getmImageView().setBackgroundResource(android.R.drawable.stat_sys_download_done);
             ImageLoader.getInstance().displayImage(uri, mBannerLayout.getmImageView());
         }
 
@@ -451,6 +457,21 @@ public class DailyNewsFragment
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         MainActivity.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
             }
+        }
+    }
+
+    private void getLatestNews() {
+        try {
+            checkWriteExternalStoragePermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            if (NetUtil.isNetworkConnected(getContext())) {
+                getPresenter().loadNews("latest");
+            } else {
+                Snackbar.make(mRootView, R.string.no_network_available, Snackbar.LENGTH_LONG).show();
+                mRecyclerView.setRefreshing(false);
+                showViewPagerIfNecessary();
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "got exception: " + e);
         }
     }
 

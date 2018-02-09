@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">myApp</string>
+    <string name="app_name">Daily News</string>
     <string name="permission_decription">this is permission decription</string>
     <string name="search_title">search</string>
     <string name="pull_to_load_more">Pull up to load more</string>
@@ -43,4 +43,12 @@
     <string name="loading">loading...</string>
 
     <string name="toolbar_title_daily_news">Daily News</string>
+    <string name="toolbar_news_content">News content</string>
+    <string name="toolbar_menu_about">About</string>
+
+    <string name="about_1">This app simulates 知乎日报.</string>
+    <string name="about_2">Not for business purpose.</string>
+    <string name="about_3">Inform me if any infringement.</string>
+    <string name="about_4">wanghlwu@gmail.com</string>
+    <string name="about_5">Version: 1.0</string>
 </resources>

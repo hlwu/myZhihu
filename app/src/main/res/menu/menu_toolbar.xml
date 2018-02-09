@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--<item-->
+        <!--android:id="@+id/search"-->
+        <!--android:title="@string/search_title"-->
+        <!--android:icon="@android:drawable/ic_menu_search"-->
+        <!--app:showAsAction="always|collapseActionView"-->
+        <!--app:actionViewClass="android.support.v7.widget.SearchView"/>-->
     <item
-        android:id="@+id/search"
-        android:title="@string/search_title"
-        android:icon="@android:drawable/ic_menu_search"
-        app:showAsAction="always|collapseActionView"
-        app:actionViewClass="android.support.v7.widget.SearchView"/>
+        android:id="@+id/toolbar_menu_about"
+        android:title="@string/toolbar_menu_about"
+        app:showAsAction="never"/>
 </menu>
