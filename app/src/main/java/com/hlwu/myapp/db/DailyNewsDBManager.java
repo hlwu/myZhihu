@@ -51,7 +51,7 @@ public class DailyNewsDBManager implements DBManager {
     }
 
     @Override
-    public Cursor queryById(int id) {
+    public Cursor queryById(String id) {
 //        return mSqLiteDatabase.query(PERSON_TABLE, null, PERSON_ID + "=?", new String[]{String.valueOf(id)}, null, null, null);
         return null;
     }

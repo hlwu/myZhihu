@@ -10,7 +10,7 @@ import android.database.Cursor;
 public interface DBManager {
     public long insert(ContentValues contentValues);
     public Cursor queryBySql(String sql);
-    public Cursor queryById(int id);
+    public Cursor queryById(String id);
     public int update(ContentValues contentValues);
     public int delete(int id);
     public void execSQL(String sql);

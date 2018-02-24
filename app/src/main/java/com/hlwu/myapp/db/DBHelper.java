@@ -23,12 +23,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
     //daily news content table
     protected static final String MYZHIHU_TABLE_DAILYNEWS_CONTENT = "daily_news_content";
-    public static final String MYZHIHU_TABLE_DAILYNEWS_CONTENT_TYPE = "type";
     public static final String MYZHIHU_TABLE_DAILYNEWS_CONTENT_ID = "id";
-    public static final String MYZHIHU_TABLE_DAILYNEWS_CONTENT_TITLE = "title";
-    public static final String MYZHIHU_TABLE_DAILYNEWS_CONTENT_STORY = "story";
-    public static final String MYZHIHU_TABLE_DAILYNEWS_CONTENT_IMAGE = "image";
-    public static final String MYZHIHU_TABLE_DAILYNEWS_CONTENT_ISREADED = "isreaded";
+    public static final String MYZHIHU_TABLE_DAILYNEWS_CONTENT_JSON = "json";
 
     private static DBHelper mDBHelper;
     private Context mContext;
@@ -54,8 +50,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String createDailyNewsContentSql = "CREATE TABLE [" + MYZHIHU_TABLE_DAILYNEWS_CONTENT + "] ("
                 + "[" + MYZHIHU_TABLE_DAILYNEWS_CONTENT_ID + "] INTEGER PRIMARY KEY,"
-                + "[" + MYZHIHU_TABLE_DAILYNEWS_CONTENT_IMAGE + "] TEXT,"
-                + "[" + MYZHIHU_TABLE_DAILYNEWS_CONTENT_ISREADED + "] INTEGER)";
+                + "[" + MYZHIHU_TABLE_DAILYNEWS_CONTENT_JSON + "] TEXT)";
 
         db.execSQL(createDailyNewsSql);
         db.execSQL(createDailyNewsContentSql);

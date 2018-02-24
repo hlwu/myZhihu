@@ -4,15 +4,18 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.text.format.Time;
+import android.util.ArraySet;
 import android.util.Log;
 import android.view.View;
 
@@ -42,11 +45,15 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by hlwu on 1/8/18.
@@ -73,9 +80,8 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
     private static final String TASK_SAVE_OR_UPDATE_DAILYNEWS = "save_or_update_dailyNews";
     private static final String TASK_LOAD_DAILYNEWS = "load_dailyNews";
 //    private static final String TASK_UPDATE_DAILYNEWS = "update_dailyNews";
-    private static final String TASK_SAVE_DAILYNEWS_CONTENT = "save_dailyNewsContent";
-    private static final String TASK_UPDATE_DAILYNEWS_CONTENT = "update_dailyNewsContent";
-    private static final String TASK_LOAD_DAILYNEWS_CONTENT = "load_dailyNewsContent";
+    private static final String READED_PREFERENCE = "readed_preference";
+    private static final String READED_PREFERENCE_KEY = "readed_stories";
 
     private ImageLoader mImageLoader;
     private DailyStructure mJustGotNews;    //include just downloaded news and just queried from db news
@@ -272,6 +278,28 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
             }
             return date;
         }
+    }
+
+    public void setStoryAsReaded(int storyId) {
+        SharedPreferences prefs = getUi().getContext().getSharedPreferences(READED_PREFERENCE, Context.MODE_PRIVATE);
+        Set<String> readedStories = prefs.getStringSet(READED_PREFERENCE_KEY, new android.support.v4.util.ArraySet<String>());
+        if (!readedStories.contains(String.valueOf(storyId))) {
+            readedStories.add(String.valueOf(storyId));
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putStringSet(READED_PREFERENCE_KEY, readedStories);
+            editor.apply();
+        }
+    }
+
+    public int getTextColor(int stroyId) {
+        SharedPreferences prefs = getUi().getContext().getSharedPreferences(READED_PREFERENCE, Context.MODE_PRIVATE);
+        Set<String> readedStories = prefs.getStringSet(READED_PREFERENCE_KEY, new android.support.v4.util.ArraySet<String>());
+        Log.d("flaggg", "readedStories: " + readedStories);
+
+        if (readedStories.contains(String.valueOf(stroyId))) {
+            return getUi().getContext().getResources().getColor(android.R.color.darker_gray);
+        }
+        return getUi().getContext().getResources().getColor(android.R.color.black);
     }
 
     public void loadNews(String date) {
@@ -472,10 +500,6 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
                         } else {
                             mIsTheFirstOpened = true;
                         }
-                        break;
-                    case TASK_SAVE_DAILYNEWS_CONTENT :
-                        break;
-                    case TASK_UPDATE_DAILYNEWS_CONTENT:
                         break;
                     default:
                         return null;

@@ -51,8 +51,8 @@ public class DailyNewsContentDBManager implements DBManager  {
     }
 
     @Override
-    public Cursor queryById(int id) {
-        String[] args = {String.valueOf(id)};
+    public Cursor queryById(String id) {
+        String[] args = new String[]{id};
         return mDailyNewsContentDB.query(DBHelper.MYZHIHU_TABLE_DAILYNEWS_CONTENT, null, DBHelper.MYZHIHU_TABLE_DAILYNEWS_CONTENT_ID + " = ?", args, null, null, null);
     }
 

@@ -76,6 +76,8 @@ public class DailyNewsFragment
                 Intent intent = new Intent(getActivity(), DailyNewsContentActivity.class);
                 intent.putExtra("id", id);
                 startActivity(intent);
+                getPresenter().setStoryAsReaded(id);
+                mDailyNewsAdapter.notifyItemChanged(position);
             }
         });
         mRecyclerView.setAdapter(mDailyNewsAdapter);
@@ -280,6 +282,7 @@ public class DailyNewsFragment
                     //do nothing
                 } else if (viewType == DailyNewsFragmentPresenter.VIEW_TYPE_STORIES) {
                     ((CardViewHolder) viewHolder).mTextView.setText(dailyNewsItems.get(position).getTitle());
+                    ((CardViewHolder) viewHolder).mTextView.setTextColor(getPresenter().getTextColor(dailyNewsItems.get(position).getId()));
                     ((CardViewHolder) viewHolder).mImageView.setImageBitmap(dailyNewsItems.get(position).getPic());
                     ((CardViewHolder) viewHolder).mTextView.setTag(position);
                 } else if (viewType == DailyNewsFragmentPresenter.VIEW_TYPE_BANNER) {
@@ -406,6 +409,8 @@ public class DailyNewsFragment
                             Intent intent = new Intent(getActivity(), DailyNewsContentActivity.class);
                             intent.putExtra("id", id);
                             startActivity(intent);
+                            getPresenter().setStoryAsReaded(id);
+                            mDailyNewsAdapter.notifyDataSetChanged();
                         }
                     });
         }
