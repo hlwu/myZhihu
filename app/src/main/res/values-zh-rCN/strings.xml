@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">日报</string>
+    <string name="app_name">不知道</string>
     <string name="permission_decription">this is permission decription</string>
     <string name="search_title">搜索</string>
     <string name="pull_to_load_more">再往上拉</string>
@@ -21,6 +21,7 @@
     <string name="no">不行</string>
 
     <string name="no_network_available">没联网啊</string>
+    <string name="no_network_available_and_not_download">未联网也未下载, 无法打开</string>
     <string name="no_new_latest_news">没新推荐啦</string>
     <string name="no_news_to_show">啥都没加载啊</string>
     <string name="download_nothing">下载不了啦</string>

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Daily News</string>
+    <string name="app_name">Know Nothing</string>
     <string name="permission_decription">this is permission decription</string>
     <string name="search_title">search</string>
     <string name="pull_to_load_more">Pull up to load more</string>
@@ -33,6 +33,7 @@
     <string name="no">NO</string>
 
     <string name="no_network_available">No network available</string>
+    <string name="no_network_available_and_not_download">No network available, no download</string>
     <string name="no_new_latest_news">No new news</string>
     <string name="no_news_to_show">No news to show</string>
     <string name="download_nothing">Can\'t download news</string>

@@ -71,6 +71,11 @@ public class DailyNewsFragment
         mDailyNewsAdapter.setOnRecyclerViewItemClickListener(new OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
+                if (!NetUtil.isNetworkConnected(getContext())
+                        && getPresenter().getTextColor(mDailyNewsItems.get(position).getId()) == getResources().getColor(android.R.color.black)) {
+                    Snackbar.make(mRootView, R.string.no_network_available_and_not_download, Snackbar.LENGTH_LONG).show();
+                    return;
+                }
                 int id = mDailyNewsItems.get(position).getId();
                 Log.d(TAG, "click card: " + mDailyNewsItems.get(position).getTitle());
                 Intent intent = new Intent(getActivity(), DailyNewsContentActivity.class);
@@ -405,6 +410,11 @@ public class DailyNewsFragment
                         @Override
                         public void onItemClick(int position) {
                             int id = mTopStoriesItems.get(position).getId();
+                            if (!NetUtil.isNetworkConnected(getContext())
+                                    && getPresenter().getTextColor(mTopStoriesItems.get(position).getId()) == getResources().getColor(android.R.color.black)) {
+                                Snackbar.make(mRootView, R.string.no_network_available_and_not_download, Snackbar.LENGTH_LONG).show();
+                                return;
+                            }
                             Log.d(TAG, "click banner: " + mTopStoriesItems.get(position).getTitle());
                             Intent intent = new Intent(getActivity(), DailyNewsContentActivity.class);
                             intent.putExtra("id", id);

@@ -283,10 +283,12 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
     public void setStoryAsReaded(int storyId) {
         SharedPreferences prefs = getUi().getContext().getSharedPreferences(READED_PREFERENCE, Context.MODE_PRIVATE);
         Set<String> readedStories = prefs.getStringSet(READED_PREFERENCE_KEY, new android.support.v4.util.ArraySet<String>());
-        if (!readedStories.contains(String.valueOf(storyId))) {
-            readedStories.add(String.valueOf(storyId));
+        Set<String> newReadedStories = new android.support.v4.util.ArraySet<String>(readedStories);
+        if (!newReadedStories.contains(String.valueOf(storyId))) {
+            newReadedStories.add(String.valueOf(storyId));
             SharedPreferences.Editor editor = prefs.edit();
-            editor.putStringSet(READED_PREFERENCE_KEY, readedStories);
+            editor.clear();
+            editor.putStringSet(READED_PREFERENCE_KEY, newReadedStories);
             editor.apply();
         }
     }
@@ -294,7 +296,6 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
     public int getTextColor(int stroyId) {
         SharedPreferences prefs = getUi().getContext().getSharedPreferences(READED_PREFERENCE, Context.MODE_PRIVATE);
         Set<String> readedStories = prefs.getStringSet(READED_PREFERENCE_KEY, new android.support.v4.util.ArraySet<String>());
-        Log.d("flaggg", "readedStories: " + readedStories);
 
         if (readedStories.contains(String.valueOf(stroyId))) {
             return getUi().getContext().getResources().getColor(android.R.color.darker_gray);
