@@ -180,6 +180,8 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
                     getUi().showViewPagerIfNecessary();
                     break;
                 case MSG_DOWNLOAD_NOTHING:
+                    getUi().showViewPagerIfNecessary();
+                    getUi().getRecyclerView().setRefreshing(false);
                     getUi().showDownloadNothing();
                     getUi().showFootProgressLoading(false);
                     break;
