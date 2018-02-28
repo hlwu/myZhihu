@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="tools_list">
+        <item>@string/tool_days</item>
+        <item>@string/tool_draw</item>
+    </string-array>
+</resources>

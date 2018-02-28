@@ -7,6 +7,10 @@
         <!--app:showAsAction="always|collapseActionView"-->
         <!--app:actionViewClass="android.support.v7.widget.SearchView"/>-->
     <item
+        android:id="@+id/toolbar_menu_tools"
+        android:title="@string/toolbar_menu_tools"
+        app:showAsAction="never"/>
+    <item
         android:id="@+id/toolbar_menu_about"
         android:title="@string/toolbar_menu_about"
         app:showAsAction="never"/>

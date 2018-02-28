@@ -46,10 +46,24 @@
     <string name="toolbar_title_daily_news">Daily News</string>
     <string name="toolbar_news_content">News content</string>
     <string name="toolbar_menu_about">About</string>
+    <string name="toolbar_menu_tools">Tools</string>
 
     <string name="about_1">This app simulates 知乎日报.</string>
     <string name="about_2">Not for business purpose.</string>
     <string name="about_3">Inform me if any infringement.</string>
     <string name="about_4">wanghlwu@gmail.com</string>
     <string name="about_5">Version: 1.0</string>
+
+    <string name="tool_days">lived days</string>
+    <string name="tool_draw">draw</string>
+
+    <string name="lived_days_title">Chooce your birthday</string>
+    <string name="lived_days_msg_today_is_birthday">HAPPY BIRTHDAY!!!!!!!!</string>
+    <string name="lived_days_msg_1">You chose %1$s, it impossible!!</string>
+    <string name="lived_days_msg_2">Oh, cuty baby, you\'ve just passed %1$d days~</string>
+    <string name="lived_days_msg_3">Child, you\'ve just passed %1$d days.\nHave fun every day!</string>
+    <string name="lived_days_msg_4">Young person, you\'ve passed %1$d days.\nGood good study, day day up!</string>
+    <string name="lived_days_msg_5">You\'ve lived %1$d days. Best wished to you!</string>
+    <string name="lived_days_msg_6">You\'ve lived %1$d days. Best wished to you!</string>
+    <string name="lived_days_msg_7">You\'ve lived %1$d days.\nMy god, you\'re too special to have birthday every year</string>
 </resources>
