@@ -37,6 +37,8 @@
     <string name="no_new_latest_news">No new news</string>
     <string name="no_news_to_show">No news to show</string>
     <string name="download_nothing">Can\'t download news</string>
+    <string name="no_network_show_local_news">No network available, show downloaded news list</string>
+    <string name="network_avaibale_to_restart_app">Network available now, please restart app to get latest news, if you want.</string>
 
     <string name="write_external_storage_explanation">I need this permission to save news, otherwise you may waste mobile data. Can I request the permission now?</string>
     <string name="no_write_external_storage_permission">OK</string>

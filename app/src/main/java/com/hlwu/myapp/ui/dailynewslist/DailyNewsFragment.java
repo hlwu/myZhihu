@@ -194,6 +194,20 @@ public class DailyNewsFragment
     }
 
     @Override
+    public void showLocalNewsMsg() {
+        if (mRootView != null) {
+            Snackbar.make(mRootView, R.string.no_network_show_local_news, Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void showNetworkAvailable() {
+        if (mRootView != null) {
+            Snackbar.make(mRootView, R.string.network_avaibale_to_restart_app, Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
     public Context getContext() {
         return getActivity();
     }

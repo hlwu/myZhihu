@@ -2,13 +2,19 @@ package com.hlwu.myapp.presenter;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
@@ -117,6 +123,8 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
         void showDownloadNothing();
         void showViewPagerIfNecessary();
         void scrollingToStart();
+        void showLocalNewsMsg();
+        void showNetworkAvailable();
         Context getContext();
     }
 
@@ -126,6 +134,10 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
         if (NetUtil.isNetworkConnected(getUi().getContext())) {
             return;
         }
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        getUi().getContext().registerReceiver(mNetworkStateReceiver, filter);
         new DBTask().execute(TASK_LOAD_DAILYNEWS);
     }
 
@@ -499,6 +511,7 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
                                     //we download the images before, so there should load images from memory or disk
                                     mImageLoader.loadImage(story.getImages()[0], targetSize, /*options,*/ mImageLoadingListener);
                                 }
+                                getUi().showLocalNewsMsg();
                             }
                         } else {
                             mIsTheFirstOpened = true;
@@ -603,5 +616,32 @@ public class DailyNewsFragmentPresenter extends Presenter<DailyNewsFragmentPrese
         }
         return getUi().getContext().getResources().getString(resId);
     }
+
+    private BroadcastReceiver mNetworkStateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
+                ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo wifiNetworkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+                NetworkInfo dataNetworkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+                if (wifiNetworkInfo.isConnected() || dataNetworkInfo.isConnected()) {
+                    getUi().showNetworkAvailable();
+                    getUi().getContext().unregisterReceiver(mNetworkStateReceiver);
+                }
+            } else {
+                ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                Network[] networks = connMgr.getAllNetworks();
+                int result = 0;
+                for (int i = 0; i < networks.length; i++) {
+                    NetworkInfo networkInfo = connMgr.getNetworkInfo(networks[i]);
+                    if (networkInfo.isConnected()) {
+                        getUi().showNetworkAvailable();
+                        getUi().getContext().unregisterReceiver(mNetworkStateReceiver);
+                    }
+                }
+
+            }
+        }
+    };
 
 }

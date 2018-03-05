@@ -1,8 +1,5 @@
 package com.hlwu.myapp.ui.search;
 
-import android.app.DatePickerDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.os.Message;
@@ -12,22 +9,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.github.xiaozhucdj.sildbacklibrary.SlideBaseActivity;
 import com.hlwu.myapp.R;
-import com.hlwu.myapp.ui.FocusFragment;
-import com.hlwu.myapp.ui.MainActivity;
-import com.hlwu.myapp.ui.about.AboutActivity;
 import com.hlwu.myapp.ui.dailynewslist.DailyNewsFragment;
-import com.nostra13.universalimageloader.utils.L;
-
-import java.util.Calendar;
 
 /**
  * Created by hlwu on 3/5/18.

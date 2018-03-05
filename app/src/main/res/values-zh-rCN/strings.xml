@@ -25,6 +25,8 @@
     <string name="no_new_latest_news">没新推荐啦</string>
     <string name="no_news_to_show">啥都没下载呀</string>
     <string name="download_nothing">下载不了呀，没有日报消息或者网络出问题了</string>
+    <string name="no_network_show_local_news">未联网, 显示已下载列表</string>
+    <string name="network_avaibale_to_restart_app">有网络了, 如果你想获取新消息, 请重启应用.</string>
 
     <string name="write_external_storage_explanation">我需要这权限将消息保存到本地，如果不给这权限，只能每次从网络上下载消息。这可能会多消耗流量。我现在能向你要权限了嘛</string>
     <string name="no_write_external_storage_permission">就服你这种土豪大佬</string>
