@@ -15,9 +15,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,10 +26,12 @@ import android.view.View;
 import android.support.design.widget.TabLayout;
 import android.widget.DatePicker;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.hlwu.myapp.R;
 import com.hlwu.myapp.ui.about.AboutActivity;
 import com.hlwu.myapp.ui.dailynewslist.DailyNewsFragment;
+import com.hlwu.myapp.ui.search.SearchActivity;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -40,10 +42,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final String TAG = "flaggg_myApp";
     public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 100;
+    public static final int MY_PERMISSIONS_REQUEST_SYSTEM_ALERT_WINDOW = 101;
+    private static final int OVERLAY_PERMISSION_REQ_CODE = 101;
 
     private static final int PAGE_COUNT = 1;
 
-    private SearchView mSearchView;
+//    final int SELECT_IMAGE = 1;
+
+//    private ActionMenuItemView mSearchView;
     private DailyNewsFragment mDailyNewsFragment;
     private FocusFragment mSecondFragment;
     private boolean mDoubleClickFlag = false;
@@ -51,29 +57,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private ProgressBar mProgressBar;
+//    private DrawView mDrawView = null;
+//    private Paint mPaint =  null;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_toolbar, menu);
-//
-//        final MenuItem myActionMenuItem = menu.findItem(R.id.search);
-//        mSearchView = (SearchView) myActionMenuItem.getActionView();
-//        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                if(!mSearchView.isIconified()) {
-//                    mSearchView.setIconified(true);
-//                }
-//                myActionMenuItem.collapseActionView();
-//                return false;
-//            }
-//            @Override
-//            public boolean onQueryTextChange(String s) {
-//                return false;
-//            }
-//        });
-
         return true;
     }
 
@@ -102,6 +92,51 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         case R.id.toolbar_menu_about:
                             startActivity(new Intent(MainActivity.this, AboutActivity.class));
                             break;
+                        case R.id.toolbar_menu_search:
+                            DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+                                public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                    Calendar chose = Calendar.getInstance();
+                                    chose.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
+                                    chose.set(Calendar.MILLISECOND, 0);
+
+                                    Calendar today = Calendar.getInstance();
+                                    today.set(Calendar.HOUR_OF_DAY, 0);
+                                    today.set(Calendar.MINUTE, 0);
+                                    today.set(Calendar.SECOND, 0);
+                                    today.set(Calendar.MILLISECOND, 0);
+                                    if (getDays(chose, today) < 0) {
+                                        Toast.makeText(MainActivity.this, R.string.search_wrong_date, Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+
+                                    StringBuffer sb = new StringBuffer();
+                                    if (year == today.get(Calendar.YEAR) && monthOfYear == today.get(Calendar.MONTH) && dayOfMonth == today.get(Calendar.DAY_OF_MONTH)) {
+                                        sb.append("latest");
+                                    } else {
+                                        chose.add(Calendar.DAY_OF_MONTH, +1);
+                                        monthOfYear = chose.get(Calendar.MONTH);
+                                        dayOfMonth = chose.get(Calendar.DAY_OF_MONTH);
+                                        sb.append(year);
+                                        sb.append(String.valueOf(++monthOfYear).length() == 2 ? String.valueOf(monthOfYear) : String.valueOf(0) + String.valueOf(monthOfYear));
+                                        sb.append(String.valueOf(dayOfMonth).length() == 2 ? String.valueOf(dayOfMonth) : String.valueOf(0) + String.valueOf(dayOfMonth));
+                                    }
+                                    Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                                    intent.putExtra("searchDate", sb.toString());
+                                    startActivity(intent);
+                                }
+                            };
+                            Calendar c = Calendar.getInstance();
+                            final DatePickerDialog d = new DatePickerDialog(MainActivity.this, mDateSetListener, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH))/*.setTitle("choice your birthday")*//*.show()*/;
+                            d.setTitle(R.string.search_dialog_title);
+                            d.setOnKeyListener(new DialogInterface.OnKeyListener() {
+                                @Override
+                                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                                    dialog.dismiss();
+                                    return false;
+                                }
+                            });
+                            d.show();
+                            break;
                     }
                     return true;
                 }
@@ -114,7 +149,105 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mTabLayout.setVisibility(View.GONE);
         mViewPager.setVisibility(View.INVISIBLE);
+
+//        mDrawView = (DrawView) findViewById(R.id.drawView);
+//        initPaint();
+//        final WindowManager wm = this.getWindowManager();
+//        Log.d("flaggg", "MainActivity.onCreate "+wm.getDefaultDisplay().getWidth()+"     "+wm.getDefaultDisplay().getHeight());
+//        mDrawView.setmContext(getApplicationContext());
+//        IntentFilter filter = new IntentFilter("com.example.canvastest.click");
+//        registerReceiver(mReceiver, filter);
     }
+
+//    private void initPaint() {
+//        mPaint = new Paint();
+//        mPaint.setAntiAlias(true);
+//        mPaint.setDither(true);
+//        mPaint.setColor(0xFFCCCCCC);
+//        //  mPaint.setStyle(Paint.Style.FILL);//起点→路径→终点, 包围起来的图形是填充的
+//        mPaint.setStyle(Paint.Style.STROKE);
+//        mPaint.setStrokeJoin(Paint.Join.ROUND);
+//        mPaint.setStrokeCap(Paint.Cap.ROUND);
+//        mPaint.setStrokeWidth(12);
+//    }
+//
+//    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+//        public void onReceive(Context context, Intent intent) {
+//            String action = intent.getAction();
+//            Log.d("flaggg", "onReceive action : " + action);
+//            if(action.equals("com.example.canvastest.click")) {
+//                chooseBackground();
+//            }
+//        }
+//    };
+//
+//    public void chooseBackground() {
+//        Log.d("flaggg", "chooseBackground");
+//        String[] items = {"select image","solid color", "pen color"};
+//        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+//        builder.setTitle("choose background");
+//        builder.setItems(items, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface arg0, int arg1) {
+//                // TODO Auto-generated method stub
+//                if(arg1 == 0) {
+//                    pickupLocalImage(SELECT_IMAGE);
+//
+//                }
+//                if(arg1 == 1) {
+//                    showColorDialog(null);
+//                }
+//                if(arg1 == 2) {
+//                    choosePaint();
+//                }
+//            }
+//        });
+//        builder.create().show();
+//    }
+//
+//    protected void pickupLocalImage(int return_num) {
+//        try {
+//            Intent intent = new Intent();
+//            intent.setAction(Intent.ACTION_GET_CONTENT);
+//            intent.addCategory(Intent.CATEGORY_OPENABLE);
+//            intent.setType("image/*");
+//            startActivityForResult(intent,return_num);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    protected void showColorDialog(Bundle state) {
+//        ColorPickerDialog dialog = new ColorPickerDialog(MainActivity.this, Color.BLACK);
+//        dialog.setOnColorChangedListener(new BackgroundColorListener());
+//        if (state != null) {
+//            dialog.onRestoreInstanceState(state);
+//        }
+//        dialog.show();
+//    }
+//
+//    public class BackgroundColorListener implements ColorPickerDialog.OnColorChangedListener {
+//        public void onColorChanged(int color)
+//        {
+//            mDrawView.setBitmapColor(color);
+//
+//        }
+//    }
+//
+//    private void choosePaint() {
+//        PaintDialog dialog = new PaintDialog(MainActivity.this);
+//        dialog.initDialog(dialog.getContext(),mPaint);
+//        dialog.setOnPaintChangedListener( new PaintChangeListener() );
+//    }
+//
+//    public class PaintChangeListener implements PaintDialog.OnPaintChangedListener
+//    {
+//        public void onPaintChanged(Paint paint)
+//        {
+//            mDrawView.setPaint(paint);
+//            mPaint = paint;
+//        }
+//    }
 
     private void showTools() {
         List<String> tools = Arrays.asList(getResources().getStringArray(R.array.tools_list));
@@ -132,6 +265,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         showBirthdayPicker();
                         break;
                     case 1:
+//                        mDrawView.setVisibility(View.VISIBLE);
+//                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                            if(Settings.canDrawOverlays(MainActivity.this)) {
+//                                //有悬浮窗权限开启服务绑定 绑定权限
+//                                Intent showIntent = new Intent(MainActivity.this, TopWindowService.class);
+//                                showIntent.putExtra(TopWindowService.OPERATION, TopWindowService.OPERATION_NOT);
+//                                startService(showIntent);
+//                            } else {
+//                                //没有悬浮窗权限,去开启悬浮窗权限
+//                                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+//                                startActivityForResult(intent, OVERLAY_PERMISSION_REQ_CODE);
+//                            }
+//                        }
                         break;
                 }
             }
@@ -139,6 +285,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (requestCode == OVERLAY_PERMISSION_REQ_CODE) {
+//            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                if (!Settings.canDrawOverlays(this)) {
+//                    Toast.makeText(this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_LONG).show();
+//                } else {
+//                    Toast.makeText(this, "权限授予成功！", Toast.LENGTH_SHORT).show();
+//                    //有悬浮窗权限开启服务绑定 绑定权限
+//                    Intent showIntent = new Intent(MainActivity.this, TopWindowService.class);
+//                    showIntent.putExtra(TopWindowService.OPERATION, TopWindowService.OPERATION_NOT);
+//                    startService(showIntent);
+//                }
+//            }
+//        }
+//    }
 
     private void showBirthdayPicker() {
         DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
@@ -276,6 +438,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     // functionality that depends on this permission.
                 }
                 break;
+//            case MY_PERMISSIONS_REQUEST_SYSTEM_ALERT_WINDOW:
+//                if (grantResults.length > 0
+//                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    // permission was granted, yay! Do the
+//                    // contacts-related task you need to do.
+//                    Log.d(TAG, "onRequestPermissionsResult system_alert_window granted");
+//                    Intent showIntent = new Intent(MainActivity.this, TopWindowService.class);
+//                    showIntent.putExtra(TopWindowService.OPERATION, TopWindowService.OPERATION_NOT);
+//                    startService(showIntent);
+//                } else {
+//                    Log.d(TAG, "onRequestPermissionsResult system_alert_window denied");
+//                    // permission denied, boo! Disable the
+//                    // functionality that depends on this permission.
+//                    Toast.makeText(this, "权限授予失败了...", Toast.LENGTH_SHORT).show();
+//                }
+//                break;
         }
     }
 
@@ -287,7 +465,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     mDoubleClickFlag = true;
                     mDoubleSelectedHandler.sendEmptyMessageDelayed(0, 500);
                 } else {
-                    mDailyNewsFragment.getPresenter().getUi().scrollingToStart();
+                    if (mDailyNewsFragment != null)
+                        mDailyNewsFragment.getPresenter().getUi().scrollingToStart();
                 }
         }
     }

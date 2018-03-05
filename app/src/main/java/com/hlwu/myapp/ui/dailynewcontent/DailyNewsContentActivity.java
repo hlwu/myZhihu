@@ -20,6 +20,7 @@ import com.hlwu.myapp.R;
 import com.hlwu.myapp.db.DBHelper;
 import com.hlwu.myapp.db.DailyNewsContentDBManager;
 import com.hlwu.myapp.news.StoriesContent;
+import com.hlwu.myapp.ui.search.SearchActivity;
 import com.hlwu.myapp.utils.HtmlUtil;
 import com.hlwu.myapp.utils.NetUtil;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -122,12 +123,19 @@ public class DailyNewsContentActivity extends SlideBaseActivity {
         Toolbar toolbar = (Toolbar) contentView.findViewById(R.id.content_toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DailyNewsContentActivity.this.finish();
+                }
+            });
         }
+
         ActionBar actionBar = this.getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
             actionBar.setTitle(R.string.toolbar_news_content);
             actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
 

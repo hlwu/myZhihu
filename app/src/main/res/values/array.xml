@@ -2,6 +2,12 @@
 <resources>
     <string-array name="tools_list">
         <item>@string/tool_days</item>
-        <item>@string/tool_draw</item>
+        <!--<item>@string/tool_draw</item>-->
+    </string-array>
+
+    <string-array name="paint_spinner">
+        <item >blur_paint</item>
+        <item >emboss_paint</item>
+        <item >normal_paint</item>
     </string-array>
 </resources>

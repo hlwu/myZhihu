@@ -38,7 +38,7 @@
     <string name="about_2">非用于商业目的, 仅仅闲着做着玩.</string>
     <string name="about_3">侵删.</string>
     <string name="about_4">wanghlwu@gmail.com</string>
-    <string name="about_5">版本: 1.0</string>
+    <string name="about_5">版本: 1.2.1</string>
 
     <string name="tool_days">人生已过多少天？</string>
     <string name="tool_draw">画图</string>
@@ -53,4 +53,9 @@
     <string name="lived_days_msg_6">智者, 您已有%1$d天丰富的阅历</string>
     <string name="lived_days_msg_7">你已经历%1$d天.\n物依稀为贵, 你四年过一次生日, 羡慕死我了</string>
 
+    <string name="dialog_color_picker">颜色选择器</string>
+    <string name="press_color_to_apply">点选颜色</string>
+
+    <string name="search_dialog_title">要看哪一天的日报?</string>
+    <string name="search_wrong_date">尚未添加预知未来功能, 暂时无法显示.</string>
 </resources>

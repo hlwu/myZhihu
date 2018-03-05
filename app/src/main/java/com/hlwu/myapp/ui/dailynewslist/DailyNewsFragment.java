@@ -35,6 +35,7 @@ import com.hlwu.myapp.presenter.DailyNewsFragmentPresenter;
 import com.hlwu.myapp.ui.MainActivity;
 import com.hlwu.myapp.ui.base.BaseFragment;
 import com.hlwu.myapp.ui.dailynewcontent.DailyNewsContentActivity;
+import com.hlwu.myapp.ui.search.SearchActivity;
 import com.hlwu.myapp.utils.NetUtil;
 import com.lhh.ptrrv.library.PullToRefreshRecyclerView;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -89,13 +90,17 @@ public class DailyNewsFragment
         mShouldLoadBeforeNews = false;
         mRecyclerView.addOnScrollListener(new OnRecyclerScrollListener());
 
-        mRecyclerView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // do refresh here
-                getLatestNews();
-            }
-        });
+        if (getActivity() instanceof MainActivity) {
+            mRecyclerView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    // do refresh here
+                    getLatestNews();
+                }
+            });
+        } else {
+            mRecyclerView.setSwipeEnable(false);
+        }
 
         return mRootView;
     }
@@ -110,7 +115,13 @@ public class DailyNewsFragment
     public void onStart() {
         super.onStart();
         if (mDailyNewsItems == null || (mDailyNewsItems != null && mDailyNewsItems.size() == 0)) {
-            getLatestNews();
+            String date = getActivity().getIntent().getStringExtra("searchDate");
+            Log.d("flaggg", "onStart, date: " + date);
+            if (date == null || date.equals("latest")) {
+                getLatestNews();
+            } else {
+                getPresenter().loadNews(date);
+            }
         }
     }
 
@@ -164,9 +175,16 @@ public class DailyNewsFragment
 
     @Override
     public void showViewPagerIfNecessary() {
-        if (((MainActivity) mActivity).getmViewPager().getVisibility() == View.INVISIBLE) {
-            ((MainActivity) mActivity).getmViewPager().setVisibility(View.VISIBLE);
-            ((MainActivity) mActivity).getmProgressBar().setVisibility(View.GONE);
+        try {
+            if (((MainActivity) mActivity).getmViewPager().getVisibility() == View.INVISIBLE) {
+                ((MainActivity) mActivity).getmViewPager().setVisibility(View.VISIBLE);
+                ((MainActivity) mActivity).getmProgressBar().setVisibility(View.GONE);
+            }
+        } catch (ClassCastException e) {
+            if (((SearchActivity) mActivity).getmViewPager().getVisibility() == View.INVISIBLE) {
+                ((SearchActivity) mActivity).getmViewPager().setVisibility(View.VISIBLE);
+                ((SearchActivity) mActivity).getmProgressBar().setVisibility(View.GONE);
+            }
         }
     }
 
@@ -194,6 +212,7 @@ public class DailyNewsFragment
                     mDailyNewsAdapter.showFootProgressLoading(true);
                     if (NetUtil.isNetworkConnected(getContext())) {
                         if (getPresenter().getmOldestNews() != null) {
+                            Log.d("flaggg", "get news date: " + getPresenter().getmOldestNews().getDate());
                             getPresenter().loadNews(getPresenter().getmOldestNews().getDate());
                         } else {
                             mDailyNewsAdapter.showFootProgressLoading(false);
@@ -293,6 +312,11 @@ public class DailyNewsFragment
                 } else if (viewType == DailyNewsFragmentPresenter.VIEW_TYPE_BANNER) {
                     List<String> imageUris = new LinkedList<String>();
                     List<String> texts = new LinkedList<String>();
+                    if (getActivity() instanceof SearchActivity) {
+                        ((BannerViewHolder) viewHolder).mConvenientBanner.setVisibility(View.GONE);
+                    } else {
+                        ((BannerViewHolder) viewHolder).mConvenientBanner.setVisibility(View.VISIBLE);
+                    }
                     for (TopStories topStory : topStoriesItems) {
                         imageUris.add(topStory.getImage());
                         texts.add(topStory.getTitle());

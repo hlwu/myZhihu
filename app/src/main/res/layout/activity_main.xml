@@ -41,4 +41,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"/>
 
+    <!--<com.hlwu.myapp.draw.DrawView-->
+        <!--android:id="@+id/drawView"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="fill_parent"-->
+        <!--android:visibility="gone"/>-->
+
 </android.support.design.widget.CoordinatorLayout>

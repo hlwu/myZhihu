@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/black"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/textShow"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="paint style show"/>
+    
+    <com.example.canvastest.DrawLine
+        android:id="@+id/lineShow"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="5dp"
+        android:background="#ff000000"
+        android:orientation="vertical"/>
+    
+    <View
+   		android:layout_width="fill_parent"
+    	android:layout_height="2dp"
+   		android:background="?android:attr/listDivider" />
+   		
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+        	   android:id="@+id/textPenWidth"
+        	   android:layout_width="wrap_content"
+        	   android:layout_height="wrap_content"
+    		   android:layout_marginTop="10dp"
+        	   android:text="画笔宽度:"/>
+            <EditText
+               android:id="@+id/et_textPenWidth"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_marginTop="10dp"
+               android:layout_marginLeft="5dp"
+               android:text="1"
+               android:inputType="numberDecimal"
+               android:digits="0123456789"/>
+        </LinearLayout>
+    	<SeekBar
+        	android:id="@+id/seekbarPenWidth"
+        	android:layout_width="fill_parent"
+        	android:layout_height="wrap_content"
+        	android:layout_marginTop="10dp"
+        	android:layout_marginBottom="10dp"
+        	android:max="50"
+        	android:progress="1"/>
+    </LinearLayout>
+    
+    <View
+   		android:layout_width="fill_parent"  
+    	android:layout_height="2dp" 
+   		android:background="?android:attr/listDivider"/>
+    
+    <RelativeLayout
+    	android:id="@+id/lineColor"
+       	android:layout_width="fill_parent"
+       	android:layout_height="55dp">
+        <TextView
+            android:id="@+id/textColor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+           	android:layout_centerInParent="true"
+            android:text="颜色:"/>
+        <Button
+            android:id="@+id/btnColor"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_centerInParent="true"
+            android:layout_alignParentRight="true"/>    
+    </RelativeLayout>
+    
+    <View
+   		android:layout_width="fill_parent"
+    	android:layout_height="2dp"
+   		android:background="?android:attr/listDivider"
+		/> 
+    
+    <Spinner
+        android:id="@+id/spinnerPaint"
+        android:layout_width="fill_parent"
+        android:layout_height="55dp" />
+
+</LinearLayout>
+    

@@ -52,7 +52,7 @@
     <string name="about_2">Not for business purpose.</string>
     <string name="about_3">Inform me if any infringement.</string>
     <string name="about_4">wanghlwu@gmail.com</string>
-    <string name="about_5">Version: 1.0</string>
+    <string name="about_5">Version: 1.2.1</string>
 
     <string name="tool_days">lived days</string>
     <string name="tool_draw">draw</string>
@@ -66,4 +66,10 @@
     <string name="lived_days_msg_5">You\'ve lived %1$d days. Best wished to you!</string>
     <string name="lived_days_msg_6">You\'ve lived %1$d days. Best wished to you!</string>
     <string name="lived_days_msg_7">You\'ve lived %1$d days.\nMy god, you\'re too special to have birthday every year</string>
+
+    <string name="dialog_color_picker">Color Picker</string>
+    <string name="press_color_to_apply">Press on Color to apply</string>
+
+    <string name="search_dialog_title">Which day\'s news you wanna see?</string>
+    <string name="search_wrong_date">You chose future time, I can\'t show!</string>
 </resources>
