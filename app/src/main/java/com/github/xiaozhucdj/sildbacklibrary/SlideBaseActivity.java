@@ -89,7 +89,6 @@ public abstract class SlideBaseActivity extends AppCompatActivity {
 
 //        ColorDrawable localColorDrawable = new ColorDrawable(Color.TRANSPARENT);
 //        localView.setBackgroundDrawable(localColorDrawable);
-        localView.setBackgroundResource(android.R.color.transparent);
         views.add(localView);
         Drawable drawable = contentView.getBackground();
         Log.d("flaggg", "initFramwork  background drawable: " + drawable);

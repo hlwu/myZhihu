@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import com.github.xiaozhucdj.sildbacklibrary.SlideBaseActivity;
 import com.google.gson.Gson;
@@ -41,6 +43,8 @@ public class DailyNewsContentActivity extends SlideBaseActivity {
     private DailyNewsContentTitileCardLayout mTitleCard;
     private WebView mWebView;
     private DailyNewsContentDBManager mDailyNewsContentDBManager;
+    private ProgressBar mProgressBar;
+    private LinearLayout mLinearLayout;
     private boolean mNeedToDownLoad = true;
 
     private static final String TASK_SAVE_DAILYNEWS_CONTENT = "save_dailynews_content";
@@ -86,6 +90,8 @@ public class DailyNewsContentActivity extends SlideBaseActivity {
                     css.add(sc.getCss()[0]);
                     String htmlData = HtmlUtil.createHtmlData(html, css, new LinkedList<String>());
                     mWebView.loadData(htmlData, mime, encoding);
+                    mLinearLayout.setVisibility(View.VISIBLE);
+                    mProgressBar.setVisibility(View.GONE);
 
                     mTitleCard.getmTitleText().setText(sc.getTitle());
                     mTitleCard.getmImageSource().setText(sc.getImage_source());
@@ -108,11 +114,15 @@ public class DailyNewsContentActivity extends SlideBaseActivity {
 
     @Override
     public void initView(View contentView) {
+        mLinearLayout = (LinearLayout) contentView.findViewById(R.id.content_ll);
+
         mTitleCard = (DailyNewsContentTitileCardLayout) contentView.findViewById(R.id.title_card);
         mTitleCard.getmImageView().setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         mWebView = (WebView) contentView.findViewById(R.id.news_webview);
         mWebView.getSettings().setJavaScriptEnabled(true);
+
+        mProgressBar = (ProgressBar) contentView.findViewById(R.id.content_loading_progressbar);
 
         mDailyNewsContentDBManager = DailyNewsContentDBManager.getInstance(DailyNewsContentActivity.this);
 

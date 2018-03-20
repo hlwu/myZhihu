@@ -1,6 +1,8 @@
 package com.hlwu.myapp.ui;
 
 import android.app.DatePickerDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -126,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 }
                             };
                             Calendar c = Calendar.getInstance();
-                            final DatePickerDialog d = new DatePickerDialog(MainActivity.this, mDateSetListener, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH))/*.setTitle("choice your birthday")*//*.show()*/;
+                            DatePickerDialog d = new DatePickerDialog(MainActivity.this, mDateSetListener, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
                             d.setTitle(R.string.search_dialog_title);
                             d.setOnKeyListener(new DialogInterface.OnKeyListener() {
                                 @Override
@@ -370,11 +372,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public ViewPager getmViewPager() {
         return mViewPager;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     @Override

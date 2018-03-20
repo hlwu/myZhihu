@@ -179,6 +179,7 @@ public class DailyNewsFragment
             if (((MainActivity) mActivity).getmViewPager().getVisibility() == View.INVISIBLE) {
                 ((MainActivity) mActivity).getmViewPager().setVisibility(View.VISIBLE);
                 ((MainActivity) mActivity).getmProgressBar().setVisibility(View.GONE);
+                ((MainActivity) mActivity).getWindow().setBackgroundDrawable(null);
             }
         } catch (ClassCastException e) {
             if (((SearchActivity) mActivity).getmViewPager().getVisibility() == View.INVISIBLE) {
